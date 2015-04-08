@@ -21,23 +21,6 @@ gem "sidekiq"
 gem "unicorn"
 gem "validates_email_format_of"
 
-# Frontend
-gem "bourbon"
-gem "bitters"
-gem "coffee-rails", "~> 4.1.0"
-gem "font-awesome-rails"
-gem "haml-rails"
-gem "handlebars_assets"
-gem "jquery-rails"
-gem "lodash-rails"
-gem "modulejs-rails"
-gem "neat"
-gem "refills"
-gem "react-rails", github: "reactjs/react-rails"
-gem "requirejs-rails"
-gem "sass-rails", "~> 5.0"
-gem "uglifier", ">= 1.3.0"
-
 group :development, :test do
   gem "pry-byebug"
   gem "rspec-rails"
