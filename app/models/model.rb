@@ -3,5 +3,5 @@ class Model
   include Mongoid::Timestamps
   include Mongoid::Attributes::Dynamic
 
-  field :type, type: String
+  field :object_type, type: String
 end
