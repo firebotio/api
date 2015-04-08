@@ -49,3 +49,7 @@ group :test do
   gem "shoulda", require: false
   gem "timecop"
 end
+
+gem "bson_ext"
+gem "mongoid"
+gem "rails-api"
