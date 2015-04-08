@@ -1,18 +1,25 @@
-class ModelsController < ApplicationController
+class V1::ModelsController < ApplicationController
   protect_from_forgery with: :null_session
 
   respond_to :json
 
-  before_action :set_access_control_headers
+  # before_action :set_access_control_headers
 
   def index
-    render json: collection
+    serializer = ModelSerializer
+    serializer.schema = %i(id name type created_at updated_at wtf)
+    render json: collection, each_serializer: serializer,
+           meta: { total: 10 }, root: :objects
+  end
+
+  def show
+    render json: collection.find_by(id: params[:id])
   end
 
   private
 
   def collection
-    Model.with(collection: params[:collection]).where type: params[:id]
+    Model.with(collection: params[:collection]).where type: params[:type]
   end
 
   def set_access_control_headers
