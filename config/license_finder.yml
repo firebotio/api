@@ -1,0 +1,16 @@
+project_name: Firebot
+dependencies_file_dir: './licenses/'
+whitelist:
+  - Apache 2.0
+  - BSD
+  - ISC
+  - LGPL
+  - MIT
+  - New BSD
+ignore_groups:
+  - test
+  - development
+ignore_dependencies:
+  - bundler
+  - json
+  - rdoc
