@@ -118,4 +118,6 @@ RSpec.configure do |config|
       spec.run
     end
   end
+
+  # Add application specific configuration below this line
 end
