@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   namespace :v1, defaults: { format: :json } do
-    resources :models, only: [] do
+    resources :models, only: [], path: "objects" do
       collection do
         get :index, path: ":type"
         get :show,  path: ":type/:id"
