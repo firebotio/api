@@ -118,4 +118,16 @@ RSpec.configure do |config|
       spec.run
     end
   end
+
+  # Add application specific configuration below this line
+  config.include Mongoid::Matchers, type: :model
+
+  # Clean/Reset Mongoid DB prior to running the tests
+  config.before :each do
+    Mongoid::Sessions.default.collections.select do |collection|
+      if collection.name !~ /system/
+        collection.drop
+      end
+    end
+  end
 end
