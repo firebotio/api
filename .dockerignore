@@ -1,14 +1,11 @@
 .bundle
+.git
 .sass-cache
 .vagrant
-coverage
 db/mongo
 db/redis
-licenses
 log/*.log
 tmp
-public/assets
 public/system
 public/uploads
-vendor/bundle
 vendor/cache
