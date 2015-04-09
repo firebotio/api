@@ -8,19 +8,21 @@ class ApplicationController < ActionController::Base
   private
 
   def access_token
-    @access_token ||= ActiveRecord::Base.connection.exec_query(
-        "SELECT * FROM Tokens WHERE token = '#{token}' LIMIT 1;"
-      ).first
+    @access_token ||= session.access_token
   end
 
   def authorize
-    error = nil
-    if access_token.nil?
-      error = "invalid or missing"
-    elsif access_token["expires_at"].to_datetime < Time.now
-      error = "expired"
+    unless access_token.valid?
+      render json: { errors: { token: access_token.error } }
     end
-    render json: { errors: { token: error } } if error
+  end
+
+  def not_found
+    render nothing: true, status: :not_found
+  end
+
+  def session
+    @session ||= Session.new(request)
   end
 
   def set_access_control_headers
@@ -30,9 +32,5 @@ class ApplicationController < ActionController::Base
     headers["Access-Control-Allow-Methods"] =
       %w(DELETE GET OPTIONS PATCH POST PUT).join(",")
     headers["Access-Control-Request-Method"] = "*"
-  end
-
-  def token
-    request.headers["Firebot-Authorization"]
   end
 end
