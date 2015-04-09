@@ -14,7 +14,7 @@ class V1::ModelsController < ApplicationController
     render json: collection_type,
            each_serializer: model_serializer,
            root: :objects,
-           meta: { total: 10 }
+           meta: { total: 10, info: "revisit" }
   end
 
   def show
@@ -56,7 +56,7 @@ class V1::ModelsController < ApplicationController
   def model_serializer
     if @model_serializer.nil?
       @model_serializer        = ModelSerializer
-      @model_serializer.schema = schema_keys
+      @model_serializer.schema = schema
     end
     @model_serializer
   end
@@ -73,9 +73,5 @@ class V1::ModelsController < ApplicationController
 
   def schema
     @schema ||= Schema.new(backend_app_id: backend_app_id, name: object_type)
-  end
-
-  def schema_keys
-    schema.keys
   end
 end

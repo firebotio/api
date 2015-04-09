@@ -2,7 +2,7 @@ class ModelSerializer < ActiveModel::Serializer
   mattr_accessor :schema
 
   def attributes
-    self.schema.each_with_object({}) do |key, hash|
+    self.schema.keys.each_with_object({}) do |key, hash|
       if respond_to? key
         value = send key
       elsif object.respond_to? key
