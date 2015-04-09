@@ -6,6 +6,7 @@ Rails.application.routes.draw do
         delete :destroy, path: ":type/:id"
         get    :index,   path: ":type"
         get    :show,    path: ":type/:id"
+        patch  :update,  path: ":type/:id"
         put    :update,  path: ":type/:id"
       end
     end
