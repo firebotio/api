@@ -3,7 +3,7 @@ class V1::ModelsController < ApplicationController
   before_action :validate_schema, except: %i(destroy)
 
   def create
-    render json: collection.create!(permitted), serializer: model_serializer
+    render json: collection.create(permitted), serializer: model_serializer
   end
 
   def destroy
@@ -34,11 +34,13 @@ class V1::ModelsController < ApplicationController
   end
 
   def collection
-    Model.with collection: collection_name
+    @collection ||= Collection.new(
+      model: Model, name: collection_name, type: object_type
+    )
   end
 
   def collection_with_type
-    collection.where object_type: object_type
+    collection.with_type
   end
 
   def collection_name
