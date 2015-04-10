@@ -53,3 +53,7 @@ end
 gem "bson_ext"
 gem "mongoid"
 gem "rails-api"
+
+group :test do
+  gem "mongoid-rspec", "~> 2.0.0.rc1"
+end

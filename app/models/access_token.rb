@@ -4,7 +4,7 @@ class AccessToken
   def initialize(token)
     result = find_by_token token
     if result
-      @expires_at     = result["expires_at"].to_datetime
+      @expires_at     = result["expires_at"].try :to_datetime
       @tokenable_id   = result["tokenable_id"]
       @tokenable_type = result["tokenable_type"]
     end
