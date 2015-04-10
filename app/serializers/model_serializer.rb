@@ -3,12 +3,11 @@ class ModelSerializer < ActiveModel::Serializer
 
   def attributes
     self.schema.keys.each_with_object({}) do |key, hash|
+      value = nil
       if respond_to? key
         value = send key
       elsif object.respond_to? key
         value = object.send key
-      else
-        value = nil
       end
       hash[key] = value
     end

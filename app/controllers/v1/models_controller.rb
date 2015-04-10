@@ -1,5 +1,6 @@
 class V1::ModelsController < ApplicationController
-  before_action :find_model, only: %i(destroy show update)
+  before_action :find_model,      only: %i(destroy show update)
+  before_action :validate_schema, except: %i(destroy)
 
   def create
     render json: collection.create!(permitted), serializer: model_serializer
@@ -11,7 +12,7 @@ class V1::ModelsController < ApplicationController
   end
 
   def index
-    render json: collection_type,
+    render json: collection_with_type,
            each_serializer: model_serializer,
            root: :objects,
            meta: { total: 10, info: "revisit" }
@@ -36,7 +37,7 @@ class V1::ModelsController < ApplicationController
     Model.with collection: collection_name
   end
 
-  def collection_type
+  def collection_with_type
     collection.where object_type: object_type
   end
 
@@ -45,7 +46,7 @@ class V1::ModelsController < ApplicationController
   end
 
   def find_model
-    @model = collection_type.find_by id: params[:id]
+    @model = collection_with_type.find_by id: params[:id]
     not_found if @model.nil?
   end
 
@@ -73,5 +74,11 @@ class V1::ModelsController < ApplicationController
 
   def schema
     @schema ||= Schema.new(backend_app_id: backend_app_id, name: object_type)
+  end
+
+  def validate_schema
+    unless schema.valid?
+      render json: { errors: { schema: "invalid for #{object_type} model" } }
+    end
   end
 end

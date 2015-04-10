@@ -13,19 +13,27 @@ class Schema
   end
 
   def schema
-    @schema ||= JSON.parse(find["schema"], symbolize_names: true)
+    @schema ||= JSON.parse(model_schema, symbolize_names: true)
+  end
+
+  def valid?
+    model_schema.present?
   end
 
   private
 
-  def find
-    ActiveRecord::Base.connection.exec_query(
+  def ignored_attributes
+    %i(created_at id object_type updated_at)
+  end
+
+  def model
+    @model ||= ActiveRecord::Base.connection.exec_query(
       "SELECT * FROM Models WHERE (#{query}) LIMIT 1;"
     ).first
   end
 
-  def ignored_attributes
-    %i(created_at id object_type updated_at)
+  def model_schema
+    @model_schema ||= model.try(:fetch, "schema")
   end
 
   def permitted_attributes
