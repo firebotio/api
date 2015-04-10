@@ -4,6 +4,10 @@ class Schema
     @name           = options[:name]
   end
 
+  def exists?
+    model_schema.present?
+  end
+
   def keys
     schema.keys.map(&:to_sym)
   end
@@ -16,10 +20,6 @@ class Schema
 
   def schema
     @schema ||= JSON.parse(model_schema, symbolize_names: true)
-  end
-
-  def valid?
-    model_schema.present?
   end
 
   private

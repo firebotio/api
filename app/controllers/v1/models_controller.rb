@@ -1,6 +1,7 @@
 class V1::ModelsController < ApplicationController
-  before_action :find_model,      only: %i(destroy show update)
-  before_action :validate_schema, except: %i(destroy)
+  before_action :load_schema,    except: %i(destroy)
+  before_action :find_model,     only: %i(destroy show update)
+  before_action :validate_model, only: %i(create update)
 
   def create
     render json: collection.create(permitted), serializer: model_serializer
@@ -52,6 +53,12 @@ class V1::ModelsController < ApplicationController
     not_found if @model.nil?
   end
 
+  def load_schema
+    unless schema.exists?
+      render json: { errors: { schema: "invalid for #{object_type} model" } }
+    end
+  end
+
   def model_with_collection
     @model.with_collection collection_name
   end
@@ -76,9 +83,15 @@ class V1::ModelsController < ApplicationController
     @schema ||= Schema.new(backend_app_id: backend_app_id, name: object_type)
   end
 
-  def validate_schema
-    unless schema.valid?
-      render json: { errors: { schema: "invalid for #{object_type} model" } }
+  def validate_model
+    unless validator.valid?
+      render json: { errors: validator.errors }
     end
+  end
+
+  def validator
+    @validator ||= Validator.new(
+      model: @model, params: permitted, schema: schema
+    )
   end
 end
