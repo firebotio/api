@@ -34,8 +34,8 @@ class V1::ModelsController < ApplicationController
   end
 
   def collection
-    @collection ||= Collection.new(
-      model: Model, name: collection_name, type: object_type
+    @collection ||= ModelCollection.new(
+      name: collection_name, type: object_type
     )
   end
 
@@ -53,7 +53,7 @@ class V1::ModelsController < ApplicationController
   end
 
   def model_with_collection
-    @model.with collection: collection_name
+    @model.with_collection collection_name
   end
 
   def model_serializer
@@ -69,9 +69,7 @@ class V1::ModelsController < ApplicationController
   end
 
   def permitted
-    params.keys.each_with_object({ object_type: object_type }) do |key, hash|
-      hash[key] = params[key] if schema.attributed_permitted?(key)
-    end
+    schema.permitted_params params
   end
 
   def schema

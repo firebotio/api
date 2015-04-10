@@ -4,12 +4,14 @@ class Schema
     @name           = options[:name]
   end
 
-  def attributed_permitted?(attribute)
-    permitted_attributes.index attribute.to_sym
-  end
-
   def keys
     schema.keys.map(&:to_sym)
+  end
+
+  def permitted_params(params)
+    params.keys.each_with_object({ object_type: @name }) do |key, hash|
+      hash[key] = params[key] if attributed_permitted?(key)
+    end
   end
 
   def schema
@@ -21,6 +23,10 @@ class Schema
   end
 
   private
+
+  def attributed_permitted?(attribute)
+    permitted_attributes.index attribute.to_sym
+  end
 
   def ignored_attributes
     %i(created_at id object_type updated_at)

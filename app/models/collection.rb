@@ -5,15 +5,15 @@ class Collection
     @type  = options[:type]
   end
 
-  delegate :create, to: :resource
+  delegate :create, to: :query
 
   def with_type
-    resource.where object_type: @type
+    query.where object_type: @type
   end
 
   private
 
-  def resource
+  def query
     @model.with collection: @name
   end
 end
