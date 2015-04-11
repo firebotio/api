@@ -4,7 +4,10 @@ class V1::ModelsController < ApplicationController
   before_action :validate_model, only: %i(create update)
 
   def create
-    render json: collection.create(permitted), serializer: model_serializer
+    model = collection.create(permitted)
+    render json: model,
+           serializer: model_serializer,
+           location: show_v1_models_url(id: model.id, host: ENV["HOST"])
   end
 
   def destroy

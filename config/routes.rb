@@ -5,7 +5,7 @@ Rails.application.routes.draw do
         post   :create,  path: ":type"
         delete :destroy, path: ":type/:id"
         get    :index,   path: ":type"
-        get    :show,    path: ":type/:id"
+        get    :show,    path: ":type/:id", as: :show
         patch  :update,  path: ":type/:id"
         put    :update,  path: ":type/:id"
       end
