@@ -3,7 +3,7 @@
 # Exit if any of the commands below fail
 set -e
 
-bundle exec bundle-audit update
-bundle exec bundle-audit
+# bundle exec bundle-audit update
+# bundle exec bundle-audit
 # bundle exec license_finder
 bundle exec rubocop -D
