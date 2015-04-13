@@ -1,4 +1,7 @@
 class V1::ModelsController < ApplicationController
+  include Collectable
+  include Schemable
+
   before_action :load_schema,    except: %i(destroy)
   before_action :find_model,     only: %i(destroy show update)
   before_action :validate_model, only: %i(create update)
@@ -33,37 +36,9 @@ class V1::ModelsController < ApplicationController
 
   private
 
-  def backend_app_id
-    access_token.tokenable_id
-  end
-
-  def collection
-    @collection ||= ModelCollection.new(
-      name: collection_name, type: object_type
-    )
-  end
-
-  def collection_with_type
-    collection.with_type
-  end
-
-  def collection_name
-    "#{access_token.tokenable_type}-#{backend_app_id}"
-  end
-
   def find_model
     @model = collection_with_type.find_by id: params[:id]
     not_found if @model.nil?
-  end
-
-  def load_schema
-    unless schema.exists?
-      render json: { errors: { schema: "invalid for #{object_type} model" } }
-    end
-  end
-
-  def model_with_collection
-    @model.with_collection collection_name
   end
 
   def model_serializer
@@ -74,27 +49,7 @@ class V1::ModelsController < ApplicationController
     @model_serializer
   end
 
-  def object_type
-    params[:type]
-  end
-
-  def permitted
-    schema.permitted_params params
-  end
-
-  def schema
-    @schema ||= Schema.new(backend_app_id: backend_app_id, name: object_type)
-  end
-
-  def validate_model
-    unless validator.valid?
-      render json: { errors: validator.errors }
-    end
-  end
-
-  def validator
-    @validator ||= Validator.new(
-      model: @model, params: permitted, schema: schema
-    )
+  def model_with_collection
+    @model.with_collection collection_name
   end
 end

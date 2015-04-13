@@ -6,10 +6,19 @@ class AccessToken
     if result
       @application_id = options[:application_id]
       @expires_at     = result["expires_at"].try :to_datetime
+      @metadata       = JSON.parse result["metadata"], symbolize_names: true
       @tokenable_id   = result["tokenable_id"]
       @tokenable_type = result["tokenable_type"]
       @tokenable_uid  = result["tokenable_uid"]
     end
+  end
+
+  def api_key
+    @metadata[:api_key]
+  end
+
+  def application_id
+    @metadata[:application_id]
   end
 
   def error
@@ -34,7 +43,7 @@ class AccessToken
   end
 
   def fields
-    "expires_at, tokenable_id, tokenable_type, tokenable_uid"
+    "expires_at, metadata, tokenable_id, tokenable_type, tokenable_uid"
   end
 
   def find_by_token(token)

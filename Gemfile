@@ -51,7 +51,9 @@ group :test do
 end
 
 gem "bson_ext"
+gem "kaminari"
 gem "mongoid"
+gem "parse-ruby-client"
 gem "rails-api"
 
 group :test do
