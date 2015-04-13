@@ -19,10 +19,9 @@ class V1::ObjectsController < ApplicationController
 
   def index
     objects =
-      Kaminari.paginate_array(query.get).page(current_page).per(per_page)
-    render json: objects,
-           each_serializer: parse_object_serializer,
-           meta: metadata(objects.total_pages)
+      Kaminari.paginate_array(query_search.get).page(current_page).per(per_page)
+    render json: objects, meta: metadata(objects.total_pages),
+           each_serializer: parse_object_serializer
   end
 
   def show
@@ -100,5 +99,17 @@ class V1::ObjectsController < ApplicationController
 
   def query
     @query ||= Parse::Query.new(object_type)
+  end
+
+  def query_search
+    query.tap do |q|
+      params.each do |key, value|
+        if schema.keys.include? key.to_sym
+          type  = schema.schema[key.to_sym][:type]
+          value = value.to_i if type == "number"
+          q.eq key, value
+        end
+      end
+    end
   end
 end
