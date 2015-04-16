@@ -23,7 +23,7 @@ class ParseQuery
   end
 
   def search(params = {})
-    query.tap do |q|
+    objects = query.tap do |q|
       params.each do |key, value|
         key_symbol = key.to_sym
         if schema.keys.include? key_symbol
@@ -31,6 +31,7 @@ class ParseQuery
         end
       end
     end
+    objects.get
   end
 
   private
