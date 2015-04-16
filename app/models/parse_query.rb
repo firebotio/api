@@ -18,10 +18,6 @@ class ParseQuery
     objects.get.first
   end
 
-  def new_object
-    Parse::Object.new @object_type
-  end
-
   def search(params = {})
     objects = query.tap do |q|
       params.each do |key, value|

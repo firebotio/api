@@ -6,8 +6,7 @@ class V1::ObjectsController < ApplicationController
   before_action :validate_model, only: %i(create update)
 
   def create
-    object = query.new_object
-    assign_attributes object
+    object = parse_object.new_object permitted
     render json: object.save, serializer: parse_object_serializer
   end
 
@@ -25,25 +24,14 @@ class V1::ObjectsController < ApplicationController
   end
 
   def update
-    assign_attributes @object
-    render json: @object.save, serializer: parse_object_serializer
+    object = parse_object.assign_attributes @object, permitted
+    render json: object.save, serializer: parse_object_serializer
   end
 
   private
 
-  def assign_attributes(object)
-    permitted.each do |key, value|
-      type = ""
-      type = schema.schema[key.to_sym][:type] if schema.keys.include? key.to_sym
-      if type == "relation"
-        value = schema.create_relationship key.to_sym, value
-      end
-      object[key] = value
-    end
-  end
-
   def find_object
-    @object = query.find_object params[:id]
+    @object = parse_query.find_object params[:id]
     not_found unless @object
   end
 
@@ -57,13 +45,19 @@ class V1::ObjectsController < ApplicationController
 
   def paginator
     @paginator ||= ObjectPaginator.new(
-      collection: query.search(params), params: params
+      collection: parse_query.search(params), params: params
     )
   end
 
-  def query
-    @query ||= ParseQuery.new(
-      access_token: access_token, object_type: object_type, schema: schema
-    )
+  def parse_object
+    @parse_object ||= ParseObject.new(parse_options)
+  end
+
+  def parse_options
+    { access_token: access_token, object_type: object_type, schema: schema }
+  end
+
+  def parse_query
+    @parse_query ||= ParseQuery.new(parse_options)
   end
 end
