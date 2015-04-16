@@ -16,7 +16,7 @@ class V1::ObjectsController < ApplicationController
   end
 
   def index
-    render paginator.json(parse_object_serializer)
+    render object_paginator.json(parse_object_serializer)
   end
 
   def show
@@ -35,18 +35,18 @@ class V1::ObjectsController < ApplicationController
     not_found unless @object
   end
 
+  def object_paginator
+    @object_paginator ||= ObjectPaginator.new(
+      collection: parse_query.search(params), params: params
+    )
+  end
+
   def parse_object_serializer
     if @parse_object_serializer.nil?
       @parse_object_serializer        = ParseObjectSerializer
       @parse_object_serializer.schema = schema
     end
     @parse_object_serializer
-  end
-
-  def paginator
-    @paginator ||= ObjectPaginator.new(
-      collection: parse_query.search(params), params: params
-    )
   end
 
   def parse_object
