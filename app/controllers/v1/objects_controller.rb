@@ -1,13 +1,12 @@
 class V1::ObjectsController < ApplicationController
   include Schemable
 
-  before_action :configure_parse
   before_action :load_schema
   before_action :find_object,    only: %i(destroy show update)
   before_action :validate_model, only: %i(create update)
 
   def create
-    object = Parse::Object.new object_type
+    object = query.new_object
     assign_attributes object
     render json: object.save, serializer: parse_object_serializer
   end
@@ -40,22 +39,10 @@ class V1::ObjectsController < ApplicationController
       type = ""
       type = schema.schema[key.to_sym][:type] if schema.keys.include? key.to_sym
       if type == "relation"
-        relationship_to = schema.schema[key.to_sym][:relationship_to]
-        object[key] = {
-          object_id:   value,
-          object_type: relationship_to
-        }
-      else
-        object[key] = value
+        value = schema.create_relationship key.to_sym, value
       end
+      object[key] = value
     end
-  end
-
-  def configure_parse
-    Parse.init(
-      application_id: access_token.application_id,
-      api_key:        access_token.api_key
-    )
   end
 
   def current_page
@@ -63,11 +50,7 @@ class V1::ObjectsController < ApplicationController
   end
 
   def find_object
-    objects = query.tap do |q|
-      q.eq "objectId", params[:id]
-      q.limit = 1
-    end
-    @object = query.get.first
+    @object = query.find_object params[:id]
     not_found unless @object
   end
 
@@ -108,29 +91,12 @@ class V1::ObjectsController < ApplicationController
   end
 
   def query
-    @query ||= Parse::Query.new(object_type)
+    @query ||= ParseQuery.new(
+      access_token: access_token, object_type: object_type, schema: schema
+    )
   end
 
   def query_search
-    query.tap do |q|
-      params.each do |key, value|
-        if schema.keys.include? key.to_sym
-          type  = schema.schema[key.to_sym][:type]
-          if type == "number"
-            if value.match /\.{1}/
-              value = value.to_f
-            else
-              value = value.to_i
-            end
-          elsif type == "relation"
-            value = {
-              object_id:   value,
-              object_type: schema.schema[key.to_sym][:relationship_to]
-            }
-          end
-          q.eq key, value
-        end
-      end
-    end
+    query.search params
   end
 end

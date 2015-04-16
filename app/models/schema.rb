@@ -4,6 +4,13 @@ class Schema
     @name           = options[:name]
   end
 
+  def create_relationship(key, value)
+    {
+      object_id:   value,
+      object_type: schema[key][:relationship_to]
+    }
+  end
+
   def exists?
     model_schema.present?
   end
