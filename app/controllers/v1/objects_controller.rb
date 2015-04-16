@@ -37,7 +37,17 @@ class V1::ObjectsController < ApplicationController
 
   def assign_attributes(object)
     permitted.each do |key, value|
-      object[key] = value
+      type = ""
+      type = schema.schema[key.to_sym][:type] if schema.keys.include? key.to_sym
+      if type == "relation"
+        relationship_to = schema.schema[key.to_sym][:relationship_to]
+        object[key] = {
+          object_id:   value,
+          object_type: relationship_to
+        }
+      else
+        object[key] = value
+      end
     end
   end
 
@@ -57,7 +67,7 @@ class V1::ObjectsController < ApplicationController
       q.eq "objectId", params[:id]
       q.limit = 1
     end
-    @object = objects.get.first
+    @object = query.get.first
     not_found unless @object
   end
 
@@ -106,7 +116,18 @@ class V1::ObjectsController < ApplicationController
       params.each do |key, value|
         if schema.keys.include? key.to_sym
           type  = schema.schema[key.to_sym][:type]
-          value = value.to_i if type == "number"
+          if type == "number"
+            if value.match /\.{1}/
+              value = value.to_f
+            else
+              value = value.to_i
+            end
+          elsif type == "relation"
+            value = {
+              object_id:   value,
+              object_type: schema.schema[key.to_sym][:relationship_to]
+            }
+          end
           q.eq key, value
         end
       end

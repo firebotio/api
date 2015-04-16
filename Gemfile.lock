@@ -395,6 +395,7 @@ DEPENDENCIES
   factory_girl_rails
   foreman
   formulaic
+  httparty
   kaminari
   license_finder
   mongoid
