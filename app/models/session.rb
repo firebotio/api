@@ -8,8 +8,8 @@ class Session
 
   def access_token
     @access_token ||= AccessToken.new(
-      application_key: application_key,
-      application_id:  application_id
+      application_id: application_id,
+      token:          application_key
     )
   end
 

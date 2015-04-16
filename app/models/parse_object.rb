@@ -5,8 +5,8 @@ class ParseObject
     @object_type = options[:object_type]
     @schema      = options[:schema]
     Parse.init(
-      application_id: options[:access_token].application_id,
-      api_key:        options[:access_token].api_key
+      api_key:        options[:access_token].parse_api_key,
+      application_id: options[:access_token].parse_application_id
     )
   end
 

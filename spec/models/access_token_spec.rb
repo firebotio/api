@@ -1,54 +1,126 @@
 require "rails_helper"
 
 describe AccessToken do
-  let(:columns) { "expires_at, token, tokenable_id, tokenable_type, user_id" }
+  let(:application_id) { SecureRandom.uuid }
   let(:expires_at)     { Time.now + 1.year }
+  let(:parse_api_key)        { SecureRandom.uuid }
+  let(:parse_application_id) { SecureRandom.uuid }
   let(:token)          { SecureRandom.uuid }
   let(:tokenable_id)   { 1 }
   let(:tokenable_type) { "BackendApp" }
-  let(:user_id)        { 1 }
-  let(:values) do
-    "'#{expires_at}', '#{token}', '#{tokenable_id}', '#{tokenable_type}', " \
-    "'#{user_id}'"
-  end
+  let(:tokenable_uid)  { application_id }
 
-  subject { described_class.new token }
+  subject { described_class.new application_id: application_id, token: token }
 
   before do
-    connection = ActiveRecord::Base.connection
-    create_columns = [
-      "expires_at date", "token varchar(255)", "tokenable_id integer",
-      "tokenable_type varchar(255)", "user_id integer"
-    ].join(", ")
-    connection.exec_query(
-      "CREATE TABLE Tokens (#{create_columns});"
+    allow(subject).to receive(:find_by_token).with(token).and_return(
+      {
+        "expires_at" => expires_at,
+        "metadata" => {
+          "api_key"        => parse_api_key,
+          "application_id" => parse_application_id
+        }.to_json,
+        "tokenable_id"   => tokenable_id,
+        "tokenable_type" => tokenable_type,
+        "tokenable_uid"  => tokenable_uid
+      }
     )
-    connection.exec_query(
-      "INSERT INTO Tokens (#{columns}) VALUES (#{values});"
-    )
+  end
+
+  describe "#parse_api_key" do
+    it "should return the api key from the metadata" do
+      expect(subject.parse_api_key).to eq parse_api_key
+    end
+  end
+
+  describe "#parse_application_id" do
+    it "should return the application id from the metadata" do
+      expect(subject.parse_application_id).to eq parse_application_id
+    end
   end
 
   describe "#error" do
-    context "when expires_at, tokenable_id, and tokenable_type not nil" do
-      it "should return nil" do
-        expect(subject.error).to be_nil
-      end
-    end
+    context "when expires_at is nil" do
+      let(:expires_at) { nil }
 
-    context "when expires_at, tokenable_id, or tokenable_type nil" do
-      let(:columns) { "token, user_id" }
-      let(:values)  { "'#{token}', '#{user_id}'" }
-
-      it "should return an error" do
+      it "should return invalid or missing" do
         expect(subject.error).to eq "invalid or missing"
       end
     end
 
-    context "when expires_at is in the past" do
+    context "when application_id is not equal to tokenable_uid" do
+      let(:tokenable_uid) { SecureRandom.uuid }
+
+      it "should return invalid application id" do
+        expect(subject.error).to eq "invalid application id"
+      end
+    end
+
+    context "when expired" do
       let(:expires_at) { Time.now - 1.year }
 
-      it "should return an error" do
+      it "should return expired" do
         expect(subject.error).to eq "expired"
+      end
+    end
+  end
+
+  describe "#tokenable_id" do
+    it "should equal the access_token's tokenable_id" do
+      expect(subject.tokenable_id).to eq tokenable_id
+    end
+  end
+
+  describe "#tokenable_type" do
+    it "should equal the access_token's tokenable_type" do
+      expect(subject.tokenable_type).to eq tokenable_type
+    end
+  end
+
+  describe "valid?" do
+    context "when everything is valid" do
+      it "should return true" do
+        expect(subject.valid?).to be true
+      end
+    end
+
+    context "when expires_at is nil" do
+      let(:expires_at) { nil }
+
+      it "should return false" do
+        expect(subject.valid?).to be false
+      end
+    end
+
+    context "when tokenable_id is nil" do
+      let(:tokenable_id) { nil }
+
+      it "should return false" do
+        expect(subject.valid?).to be false
+      end
+    end
+
+    context "when tokenable_type is nil" do
+      let(:tokenable_type) { nil }
+
+      it "should return false" do
+        expect(subject.valid?).to be false
+      end
+    end
+
+    context "when valid_application_id is false" do
+      let(:tokenable_uid) { SecureRandom.uuid }
+
+      it "should return false" do
+        expect(subject.valid?).to be false
+      end
+    end
+
+    context "when expired" do
+      let(:expires_at) { Time.now - 1.year }
+
+      it "should return false" do
+        expect(subject.valid?).to be false
       end
     end
   end

@@ -1,24 +1,15 @@
 class AccessToken
-  attr_reader :expires_at, :tokenable_id, :tokenable_type
-
   def initialize(options = {})
-    result = find_by_token options[:application_key]
-    if result
-      @application_id = options[:application_id]
-      @expires_at     = result["expires_at"].try :to_datetime
-      @metadata       = JSON.parse result["metadata"], symbolize_names: true
-      @tokenable_id   = result["tokenable_id"]
-      @tokenable_type = result["tokenable_type"]
-      @tokenable_uid  = result["tokenable_uid"]
-    end
+    @application_id = options[:application_id]
+    @token          = options[:token]
   end
 
-  def api_key
-    @metadata[:api_key]
+  def parse_api_key
+    metadata[:api_key]
   end
 
-  def application_id
-    @metadata[:application_id]
+  def parse_application_id
+    metadata[:application_id]
   end
 
   def error
@@ -31,15 +22,31 @@ class AccessToken
     end
   end
 
+  def tokenable_id
+    @tokenable_id ||= access_token["tokenable_id"]
+  end
+
+  def tokenable_type
+    @tokenable_type ||= access_token["tokenable_type"]
+  end
+
   def valid?
-    expires_at && tokenable_id && tokenable_type &&
+    expires_at.present? && tokenable_id.present? && tokenable_type.present? &&
     valid_application_id && !expired?
   end
 
   private
 
+  def access_token
+    @access_token ||= find_by_token(@token)
+  end
+
   def expired?
     expires_at < Time.now
+  end
+
+  def expires_at
+    @expires_at ||= access_token["expires_at"].try(:to_datetime)
   end
 
   def fields
@@ -52,7 +59,15 @@ class AccessToken
     ).first
   end
 
+  def metadata
+    @metadata ||= JSON.parse(access_token["metadata"], symbolize_names: true)
+  end
+
+  def tokenable_uid
+    @tokenable_uid ||= access_token["tokenable_uid"]
+  end
+
   def valid_application_id
-    @application_id == @tokenable_uid
+    @application_id == tokenable_uid
   end
 end
