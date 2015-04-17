@@ -5,6 +5,8 @@ class Model
 
   field :object_type, type: String
 
+  validates_presence_of :object_type
+
   def with_collection(name)
     with collection: name
   end
