@@ -1,15 +1,4 @@
-class ParseQuery
-  attr_reader :schema
-
-  def initialize(options = {})
-    @object_type = options[:object_type]
-    @schema      = options[:schema]
-    Parse.init(
-      api_key:        options[:access_token].parse_api_key,
-      application_id: options[:access_token].parse_application_id
-    )
-  end
-
+class ParseQuery < ParseClient
   def find_object(id)
     objects = query.tap do |q|
       q.eq "objectId", id
@@ -33,7 +22,11 @@ class ParseQuery
   private
 
   def query
-    @query ||= Parse::Query.new(@object_type)
+    unless @query
+      initialize_parse
+      @query = Parse::Query.new @object_type
+    end
+    @query
   end
 
   def sanitize_value(value, type, key)

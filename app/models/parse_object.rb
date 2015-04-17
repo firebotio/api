@@ -1,15 +1,4 @@
-class ParseObject
-  attr_reader :schema
-
-  def initialize(options = {})
-    @object_type = options[:object_type]
-    @schema      = options[:schema]
-    Parse.init(
-      api_key:        options[:access_token].parse_api_key,
-      application_id: options[:access_token].parse_application_id
-    )
-  end
-
+class ParseObject < ParseClient
   def assign_attributes(object, attributes = {})
     attributes.keys.each_with_object(object) do |key, obj|
       symbol = key.to_sym
@@ -21,7 +10,16 @@ class ParseObject
   end
 
   def new_object(attributes = {})
-    object = Parse::Object.new @object_type
     assign_attributes object, attributes
+  end
+
+  private
+
+  def object
+    unless @object
+      initialize_parse
+      @object = Parse::Object.new @object_type
+    end
+    @object
   end
 end
