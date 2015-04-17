@@ -39,6 +39,6 @@ class ObjectPaginator
   end
 
   def total_pages
-    @total_pages ||= objects.total_pages
+    @total_pages ||= objects.try(:total_pages)
   end
 end
