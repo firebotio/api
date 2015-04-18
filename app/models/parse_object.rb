@@ -1,10 +1,10 @@
 class ParseObject < ParseClient
   def assign_attributes(object, attributes = {})
     attributes.keys.each_with_object(object) do |key, obj|
-      symbol = key.to_sym
-      type   = schema.schema[symbol][:type] if schema.keys.include?(symbol)
-      value  = attributes[key]
-      value  = schema.create_relationship(symbol, value) if type == "relation"
+      value = attributes[key]
+      if attribute_type(key) == "relation"
+        value = schema.create_relationship key.to_sym, value
+      end
       object[key] = value
     end
   end
@@ -14,6 +14,11 @@ class ParseObject < ParseClient
   end
 
   private
+
+  def attribute_type(attribute)
+    symbol = attribute.to_sym
+    schema.schema[symbol][:type] if schema.keys.include?(symbol)
+  end
 
   def object
     unless @object
