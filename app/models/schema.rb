@@ -40,8 +40,9 @@ class Schema
   end
 
   def model
+    query = "backend_app_id = '#{@backend_app_id}' AND name = '#{@name}'"
     @model ||= ActiveRecord::Base.connection.exec_query(
-      "SELECT * FROM Models WHERE (#{where_query}) LIMIT 1;"
+      "SELECT * FROM Models WHERE (#{query}) LIMIT 1;"
     ).first
   end
 
@@ -51,9 +52,5 @@ class Schema
 
   def permitted_attributes
     keys - ignored_attributes
-  end
-
-  def where_query
-    "backend_app_id = '#{@backend_app_id}' AND name = '#{@name}'"
   end
 end

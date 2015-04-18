@@ -14,7 +14,8 @@ describe ParseQuery do
   let(:body)        { { "results" => [{ first_name: "first_name" }] }.to_json }
   let(:endpoint)    { "https://api.parse.com/1/classes/#{object_type}" }
   let(:object_type) { "Test" }
-  let(:schema)      { Schema.new }
+  let(:relationship_to) { "User" }
+  let(:schema)          { Schema.new }
 
   subject { described_class.new attributes }
 
@@ -22,11 +23,18 @@ describe ParseQuery do
     allow(schema).to receive(:model).and_return(
       {
         "schema" => {
+          age: {
+            type: "number"
+          },
           first_name: {
             type: "string"
           },
           last_name: {
             type: "string"
+          },
+          user: {
+            relationship_to: relationship_to,
+            type: "relation"
           }
         }.to_json
       }
@@ -51,8 +59,18 @@ describe ParseQuery do
   end
 
   describe "#search" do
-    let(:where) { { "first_name" => "first_name" }.to_json }
-    let(:url)   { [endpoint, "where=#{CGI.escape where}"].join "?" }
+    let(:where) do
+      {
+        "age" => 20,
+        "first_name" => "first_name",
+        "last_name" => "last_name",
+        "user" => {
+          "object_id" => "123",
+          "object_type" => relationship_to
+        }
+      }
+    end
+    let(:url) { [endpoint, "where=#{CGI.escape where.to_json}"].join "?" }
 
     before do
       stub_request(:get, url).to_return body: body
@@ -60,16 +78,15 @@ describe ParseQuery do
 
     context "when schema includes the key" do
       it "should receive :sanitize_value" do
-        expect(subject).to receive(:sanitize_value)
-        .with("first_name", "string", "first_name")
+        expect(subject).to receive(:sanitize_value).exactly(4).times
         .and_call_original
 
-        subject.search({ "first_name" => "first_name" })
+        subject.search where.merge({ "age" => "20", "user" => "123" })
       end
     end
 
     context "when schema does not include key" do
-      let(:where) { {}.to_json }
+      let(:where) { {} }
 
       it "should not receive :sanitize_value" do
         expect(subject).not_to receive :sanitize_value

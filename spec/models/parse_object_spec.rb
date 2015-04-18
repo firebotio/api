@@ -21,6 +21,9 @@ describe ParseObject do
           },
           last_name: {
             type: "string"
+          },
+          user: {
+            type: "relation"
           }
         }.to_json
       }
@@ -44,6 +47,15 @@ describe ParseObject do
       }
       expect(obj["first_name"]).to eq first_name
       expect(obj["last_name"]).to eq last_name
+    end
+
+    context "when attribute type is relation" do
+      it "should send schema message :create_relationship" do
+        expect(schema).to receive :create_relationship
+        obj = subject.assign_attributes object, {
+          "user" => "123"
+        }
+      end
     end
   end
 

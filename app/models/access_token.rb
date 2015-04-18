@@ -49,11 +49,8 @@ class AccessToken
     @expires_at ||= access_token["expires_at"].try(:to_datetime)
   end
 
-  def fields
-    "expires_at, metadata, tokenable_id, tokenable_type, tokenable_uid"
-  end
-
   def find_by_token(token)
+    fields = "expires_at, metadata, tokenable_id, tokenable_type, tokenable_uid"
     ActiveRecord::Base.connection.exec_query(
       "SELECT #{fields} FROM Tokens WHERE token = '#{token}' LIMIT 1;"
     ).first
