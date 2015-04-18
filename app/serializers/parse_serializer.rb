@@ -1,4 +1,4 @@
-class ParseObjectSerializer < ActiveModel::Serializer
+class ParseSerializer < ActiveModel::Serializer
   mattr_accessor :schema
 
   def attributes
@@ -25,7 +25,7 @@ class ParseObjectSerializer < ActiveModel::Serializer
   end
 
   def id
-    object.id.to_s
+    object["objectId"]
   end
 
   def updated_at

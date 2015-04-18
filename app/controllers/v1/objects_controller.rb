@@ -7,7 +7,7 @@ class V1::ObjectsController < ApplicationController
 
   def create
     object = parse_object.new_object permitted
-    render json: object.save, serializer: parse_object_serializer
+    render json: object.save, serializer: parse_serializer
   end
 
   def destroy
@@ -16,16 +16,16 @@ class V1::ObjectsController < ApplicationController
   end
 
   def index
-    render object_paginator.json(parse_object_serializer)
+    render object_paginator.json(parse_serializer)
   end
 
   def show
-    render json: @object, serializer: parse_object_serializer
+    render json: @object, serializer: parse_serializer
   end
 
   def update
     object = parse_object.assign_attributes @object, permitted
-    render json: object.save, serializer: parse_object_serializer
+    render json: object.save, serializer: parse_serializer
   end
 
   private
@@ -41,12 +41,12 @@ class V1::ObjectsController < ApplicationController
     )
   end
 
-  def parse_object_serializer
-    if @parse_object_serializer.nil?
-      @parse_object_serializer        = ParseObjectSerializer
-      @parse_object_serializer.schema = schema
+  def parse_serializer
+    if @parse_serializer.nil?
+      @parse_serializer        = ParseSerializer
+      @parse_serializer.schema = schema
     end
-    @parse_object_serializer
+    @parse_serializer
   end
 
   def parse_object
