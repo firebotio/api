@@ -15,11 +15,6 @@ class ParseObject < ParseClient
 
   private
 
-  def attribute_type(attribute)
-    symbol = attribute.to_sym
-    schema.schema[symbol][:type] if schema.keys.include?(symbol)
-  end
-
   def object
     unless @object
       initialize_parse

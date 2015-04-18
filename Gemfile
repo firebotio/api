@@ -56,6 +56,7 @@ gem "kaminari"
 gem "mongoid"
 gem "parse-ruby-client"
 gem "rails-api"
+gem "webmock"
 
 group :test do
   gem "mongoid-rspec", "~> 2.0.0.rc1"

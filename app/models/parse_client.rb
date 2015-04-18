@@ -9,6 +9,11 @@ class ParseClient
 
   private
 
+  def attribute_type(attribute)
+    symbol = attribute.to_sym
+    schema.schema[symbol][:type] if schema.keys.include?(symbol)
+  end
+
   def initialize_parse
     Parse.init(
       api_key:        @access_token.parse_api_key,

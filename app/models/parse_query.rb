@@ -10,9 +10,8 @@ class ParseQuery < ParseClient
   def search(params = {})
     objects = query.tap do |q|
       params.each do |key, value|
-        key_symbol = key.to_sym
-        if schema.keys.include? key_symbol
-          q.eq key, sanitize_value(value, schema.schema[key_symbol][:type], key)
+        if schema_include? key
+          q.eq key, sanitize_value(value, attribute_type(key), key)
         end
       end
     end
@@ -39,6 +38,12 @@ class ParseQuery < ParseClient
       end
     when "relation"
       schema.create_relationship key.to_sym, value
+    else
+      value
     end
+  end
+
+  def schema_include?(key)
+    schema.keys.include? key.to_sym
   end
 end
