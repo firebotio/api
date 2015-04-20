@@ -8,13 +8,4 @@ class ApplicationController < ActionController::Base
   def not_found
     render nothing: true, status: :not_found
   end
-
-  def set_access_control_headers
-    headers["Access-Control-Allow-Headers"] =
-      %w(Accept Authorization Content-Type Origin X-Requested-With).join(",")
-    headers["Access-Control-Allow-Origin"] = "*"
-    headers["Access-Control-Allow-Methods"] =
-      %w(DELETE GET OPTIONS PATCH POST PUT).join(",")
-    headers["Access-Control-Request-Method"] = "*"
-  end
 end
