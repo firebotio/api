@@ -32,6 +32,9 @@ describe ParseQuery do
           last_name: {
             type: "string"
           },
+          weight: {
+            type: "number"
+          },
           user: {
             relationship_to: relationship_to,
             type: "relation"
@@ -42,7 +45,7 @@ describe ParseQuery do
   end
 
   describe "#find_object" do
-    let(:object_id) { 1 }
+    let(:object_id) { "1" }
     let(:where)     { { "objectId" => object_id }.to_json }
     let(:url) do
       [endpoint, ["limit=1", "where=#{CGI.escape where}"].join("&")].join "?"
@@ -64,6 +67,7 @@ describe ParseQuery do
         "age" => 20,
         "first_name" => "first_name",
         "last_name" => "last_name",
+        "weight" => 145.5,
         "user" => {
           "object_id" => "123",
           "object_type" => relationship_to
@@ -78,10 +82,12 @@ describe ParseQuery do
 
     context "when schema includes the key" do
       it "should receive :sanitize_value" do
-        expect(subject).to receive(:sanitize_value).exactly(4).times
+        expect(subject).to receive(:sanitize_value).exactly(5).times
         .and_call_original
 
-        subject.search where.merge({ "age" => "20", "user" => "123" })
+        subject.search where.merge({
+          "age" => "20", "weight" => "145.5", "user" => "123"
+          })
       end
     end
 

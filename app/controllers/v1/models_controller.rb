@@ -1,13 +1,15 @@
 class V1::ModelsController < ApplicationController
   include Collectable
   include Schemable
+  include Sessionable
 
+  before_action :authorize
   before_action :load_schema,    except: %i(destroy)
   before_action :find_model,     only: %i(destroy show update)
   before_action :validate_model, only: %i(create update)
 
   def create
-    model = collection.create(permitted)
+    model = collection.create permitted
     render json: model,
            serializer: model_serializer,
            location: show_v1_models_url(id: model.id, host: ENV["HOST"])

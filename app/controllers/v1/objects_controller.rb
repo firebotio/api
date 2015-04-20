@@ -1,6 +1,8 @@
 class V1::ObjectsController < ApplicationController
   include Schemable
+  include Sessionable
 
+  before_action :authorize
   before_action :load_schema
   before_action :find_object,    only: %i(destroy show update)
   before_action :validate_model, only: %i(create update)

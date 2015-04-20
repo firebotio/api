@@ -1,11 +1,7 @@
 class ApplicationController < ActionController::Base
-  include Sessionable
-
   protect_from_forgery with: :null_session
 
   respond_to :json
-
-  before_action :authorize
 
   private
 
