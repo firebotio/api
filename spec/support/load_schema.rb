@@ -8,6 +8,9 @@ shared_context :load_schema do
         "schema" => {
           first_name: {
             type: "string"
+          },
+          id: {
+            type: "string"
           }
         }.to_json
       }
