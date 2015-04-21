@@ -1,15 +1,5 @@
 require "rails_helper"
 
-class FakeAccessToken
-  def error
-    "error"
-  end
-
-  def valid?
-    false
-  end
-end
-
 describe ApplicationController do
   controller do
     include Sessionable
@@ -22,21 +12,27 @@ describe ApplicationController do
   before { get :index }
 
   describe "#access_token" do
-    shared_context :authorize
-
     it "should return an AccessToken" do
       expect(controller.access_token.class).to eq AccessToken
     end
   end
 
   describe "#authorize" do
-    controller do
-      def access_token
-        FakeAccessToken.new
+    class FakeAccessToken
+      def error
+        "error"
       end
 
-      def index
-        authorize
+      def valid?
+        false
+      end
+    end
+
+    controller do
+      before_action :authorize
+
+      def access_token
+        FakeAccessToken.new
       end
     end
 
@@ -46,8 +42,6 @@ describe ApplicationController do
   end
 
   describe "#session" do
-    shared_context :authorize
-
     it "should return a Session" do
       expect(controller.session.class).to eq Session
     end

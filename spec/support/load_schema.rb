@@ -11,6 +11,9 @@ shared_context :load_schema do
           },
           id: {
             type: "string"
+          },
+          skills: {
+            type: "array"
           }
         }.to_json
       }
