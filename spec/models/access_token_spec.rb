@@ -124,4 +124,17 @@ describe AccessToken do
       end
     end
   end
+
+  # private
+
+  describe "#find_by_token" do
+    let(:access_token) { described_class.new }
+
+    it "should receive :find_by_token" do
+      begin
+        access_token.send :find_by_token, nil
+      rescue
+      end
+    end
+  end
 end

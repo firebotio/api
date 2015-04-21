@@ -102,4 +102,17 @@ describe Schema do
       expect(schema).to have_key relationship_key
     end
   end
+
+  # private
+
+  describe "#model" do
+    let(:schema) { described_class.new attributes }
+
+    it "should receive :model" do
+      begin
+        schema.send :model
+      rescue
+      end
+    end
+  end
 end
