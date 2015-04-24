@@ -1,4 +1,4 @@
-app_name = ENV["APP_NAME"]
+app_name = ENV.fetch "APP_NAME", "app"
 
 app_dir    = File.expand_path "../../", __FILE__
 # shared_dir = File.expand_path "../../../shared/", __FILE__
