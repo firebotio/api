@@ -25,9 +25,9 @@ RUN chmod +x /usr/bin/start-server.sh
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Secrets
-ENV SECRET_KEY_BASE <rake secret>
+ENV SECRET_KEY_BASE $SECRET_KEY_BASE
 
-ENV DB_NAME quantum
+ENV DB_NAME firebot
 
 EXPOSE 8080
 

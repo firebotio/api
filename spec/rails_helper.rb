@@ -9,8 +9,8 @@ require "shoulda"
 require "paperclip/matchers"
 require "paranoia/rspec"
 require "payload/testing"
-require "capybara/rails"
-require "capybara/rspec"
+# require "capybara/rails"
+# require "capybara/rspec"
 require "validates_email_format_of/rspec_matcher"
 
 Capybara.javascript_driver = :webkit
