@@ -8,6 +8,9 @@ WORKDIR $ROOT_DIR
 # Mount volume for Nginx to serve static files from public folder
 VOLUME $ROOT_DIR
 
+# This is for unicorn.rb
+RUN mkdir -p $ROOT_DIR/tmp/sockets
+
 # Gems
 COPY Gemfile $ROOT_DIR/
 COPY Gemfile.lock $ROOT_DIR/
