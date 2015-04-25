@@ -3,13 +3,10 @@ FROM ruby
 ENV RAILS_ENV production
 ENV ROOT_DIR /var/www/app
 
-RUN mkdir -p $ROOT_DIR
+RUN mkdir -p $ROOT_DIR/tmp
 WORKDIR $ROOT_DIR
 # Mount volume for Nginx to serve static files from public folder
 VOLUME $ROOT_DIR
-
-# This is for unicorn.rb
-RUN mkdir -p $ROOT_DIR/tmp/sockets
 
 # Gems
 COPY Gemfile $ROOT_DIR/
@@ -26,9 +23,6 @@ COPY start-server.sh /usr/bin/start-server.sh
 RUN chmod +x /usr/bin/start-server.sh
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Secrets
-ENV SECRET_KEY_BASE $SECRET_KEY_BASE
 
 ENV DB_NAME firebot
 
