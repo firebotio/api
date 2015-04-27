@@ -1,4 +1,5 @@
 .bundle
+.cloud-config.yml
 .sass-cache
 .vagrant
 coverage

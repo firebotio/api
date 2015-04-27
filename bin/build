@@ -1,0 +1,4 @@
+#!/bin/bash
+
+bundle exec rake assets:precompile assets:clean RAILS_ENV=production
+docker build -t dangerous/firebot-backend .

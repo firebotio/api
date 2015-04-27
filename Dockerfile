@@ -1,10 +1,12 @@
 FROM ruby
 
+ENV DB_NAME firebot
 ENV RAILS_ENV production
 ENV ROOT_DIR /var/www/app
 
 RUN mkdir -p $ROOT_DIR/tmp
 WORKDIR $ROOT_DIR
+
 # Mount volume for Nginx to serve static files from public folder
 VOLUME $ROOT_DIR
 
@@ -17,15 +19,12 @@ RUN bundle install --system
 COPY . $ROOT_DIR
 
 # Assets
-RUN bundle exec rake assets:precompile assets:clean RAILS_ENV=$RAILS_ENV --trace
+# RUN bundle exec rake assets:precompile assets:clean RAILS_ENV=$RAILS_ENV
 
-COPY start-server.sh /usr/bin/start-server.sh
-RUN chmod +x /usr/bin/start-server.sh
-
+# Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-ENV DB_NAME firebot
 
 EXPOSE 8080
 
-CMD /usr/bin/start-server.sh
+# Run unicorn
+CMD $ROOT_DIR/bin/web
