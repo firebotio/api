@@ -1,4 +1,4 @@
-app_name = ENV["APP_NAME"]
+app_name = ENV.fetch "APP_NAME", "app"
 
 app_dir    = File.expand_path "../../", __FILE__
 # shared_dir = File.expand_path "../../../shared/", __FILE__
@@ -13,7 +13,7 @@ stderr_path "#{app_dir}/log/unicorn.log"
 stdout_path "#{app_dir}/log/unicorn.log"
 
 # Listen on a Unix data socket
-listen "#{app_dir}/tmp/sockets/unicorn.sock", backlog: 64
+listen "#{app_dir}/tmp/unicorn.sock", backlog: 64
 # listen "127.0.0.1:8080"
 
 # pid "#{app_dir}/tmp/pids/unicorn.pid"
