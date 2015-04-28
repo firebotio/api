@@ -18,6 +18,7 @@ gem "pg"
 gem "rack-cors", require: "rack/cors"
 gem "redis-rails"
 gem "sidekiq"
+gem "therubyracer", platforms: :ruby
 gem "unicorn"
 gem "validates_email_format_of"
 
