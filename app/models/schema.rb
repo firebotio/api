@@ -4,6 +4,13 @@ class Schema
     @name           = options[:name]
   end
 
+  def create_relationship(key, value)
+    {
+      object_id:   value,
+      object_type: schema[key][:relationship_to]
+    }
+  end
+
   def exists?
     model_schema.present?
   end
@@ -33,6 +40,7 @@ class Schema
   end
 
   def model
+    query = "backend_app_id = '#{@backend_app_id}' AND name = '#{@name}'"
     @model ||= ActiveRecord::Base.connection.exec_query(
       "SELECT * FROM Models WHERE (#{query}) LIMIT 1;"
     ).first
@@ -44,9 +52,5 @@ class Schema
 
   def permitted_attributes
     keys - ignored_attributes
-  end
-
-  def query
-    "backend_app_id = '#{@backend_app_id}' AND name = '#{@name}'"
   end
 end

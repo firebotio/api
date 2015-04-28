@@ -51,9 +51,13 @@ group :test do
 end
 
 gem "bson_ext"
+gem "httparty"
+gem "kaminari"
 gem "mongoid"
+gem "parse-ruby-client"
 gem "rails-api"
 
 group :test do
   gem "mongoid-rspec", "~> 2.0.0.rc1"
+  gem "webmock"
 end

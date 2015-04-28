@@ -1,6 +1,5 @@
 class Validator
   def initialize(options = {})
-    @model  = options[:model]
     @params = options[:params]
     @schema = options[:schema]
   end

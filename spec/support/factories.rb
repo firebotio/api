@@ -8,4 +8,8 @@ FactoryGirl.define do
   sequence(:email) { |n| "email-#{n}@example.com" }
   sequence(:name)  { |n| "name-#{n}" }
   sequence(:uid)   { |n| "uid-#{n}" }
+
+  factory :model do
+    object_type { generate :name }
+  end
 end
