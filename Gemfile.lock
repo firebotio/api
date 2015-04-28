@@ -85,9 +85,6 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-webkit (1.5.0)
-      capybara (>= 2.3.0, < 2.5.0)
-      json
     celluloid (0.16.0)
       timers (~> 4.0.0)
     climate_control (0.0.3)
@@ -158,6 +155,7 @@ GEM
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
     kgio (2.9.3)
+    libv8 (3.16.14.7)
     license_finder (2.0.3)
       bundler
       httparty
@@ -258,6 +256,7 @@ GEM
       redis-store (~> 1.1.0)
     redis-store (1.1.4)
       redis (>= 2.2)
+    ref (1.0.5)
     request_store (1.1.0)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
@@ -329,6 +328,9 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
@@ -358,8 +360,6 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   better_errors
   bundler-audit
-  capybara
-  capybara-webkit
   database_cleaner
   dotenv-rails
   draper
@@ -387,6 +387,7 @@ DEPENDENCIES
   simplecov
   spring
   spring-commands-rspec
+  therubyracer
   timecop
   unicorn
   validates_email_format_of
