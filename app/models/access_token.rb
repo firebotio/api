@@ -46,7 +46,14 @@ class AccessToken
   end
 
   def expires_at
-    @expires_at ||= access_token["expires_at"].try(:to_datetime)
+    unless @expires_at
+      if access_token && access_token["expires_at"]
+        @expires_at = access_token["expires_at"].to_datetime
+      else
+        @expires_at = nil
+      end
+    end
+    @expires_at
   end
 
   def find_by_token(token)

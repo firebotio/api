@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get "health" => "health#index"
+
+  # Add application specific routes under here
+  #-----------------------------------------------------------------------------
   namespace :v1, defaults: { format: :json }, path: "1" do
     resources :models, only: [], path: "models" do
       collection do
