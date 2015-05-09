@@ -54,9 +54,11 @@ end
 gem "bson_ext"
 gem "httparty"
 gem "kaminari"
+gem "mailgun-ruby", "~>1.0.3", require: "mailgun"
 gem "mongoid"
 gem "parse-ruby-client"
 gem "rails-api"
+gem "twilio-ruby", "~> 4.1.0"
 
 group :test do
   gem "mongoid-rspec", "~> 2.0.0.rc1"

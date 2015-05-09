@@ -25,5 +25,12 @@ Rails.application.routes.draw do
         put    :update,  path: ":type/:id"
       end
     end
+
+    resources :services, only: [] do
+      collection do
+        post :email
+        # post :sms
+      end
+    end
   end
 end
