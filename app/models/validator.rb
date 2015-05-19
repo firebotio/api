@@ -20,7 +20,7 @@ class Validator
   private
 
   def validate_required(key, required, column)
-    errors[key] = "is required" if required && column.nil?
+    errors[key] = "is required" if required && !column.present?
   end
 
   def validate_array(key, column)
